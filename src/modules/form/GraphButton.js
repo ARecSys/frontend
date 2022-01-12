@@ -5,7 +5,6 @@ const Button = props => {
 
     const handleClick = (e) => {
         e.preventDefault();
-        console.log('Le lien a été cliqué.');
     }
     
     return (

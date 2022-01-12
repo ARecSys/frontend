@@ -76,7 +76,6 @@ export const registerUser = (userData, history)  => {
 // Log user out
 export const logoutUser = (history) => () => {
   // Remove token from local storage
-  console.log("logout called")
   localStorage.removeItem("token");
   history.push("/signin")
   window.location.reload();
