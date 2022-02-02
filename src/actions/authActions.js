@@ -14,7 +14,7 @@ export default function useToken() {
 
 
   const saveToken = userToken => {
-    localStorage.setItem('token', JSON.stringify(userToken));
+    localStorage.setItem('token', userToken);
     setToken(userToken.token);
   };
 
@@ -36,9 +36,10 @@ export const setCurrentUser = (decoded, setUserData) => {
 // Login - get user token
 export const loginUser = (userData, history, setToken, setUserData) => {
   axios
-    .post("http://127.0.0.1:5000/api/users/login", userData)
+    .post("/api/users/login", userData)
     .then(res => {
 
+      console.log("test")
       //Save to localStorage
       const { token } = res.data;
       localStorage.setItem("token", token);
@@ -65,7 +66,7 @@ export const loginUser = (userData, history, setToken, setUserData) => {
 export const registerUser = (userData, history)  => {
 
   axios
-    .post("http://127.0.0.1:5000/api/users/register", userData)
+    .post("/api/users/register", userData)
     .then(res => history.push("/signin"))
     .catch(err =>
       console.log(err)

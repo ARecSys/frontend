@@ -5,19 +5,26 @@ import axios from 'axios';
 
 import Input from '../form/GraphInput'
 import GraphContainer from '../components/GraphContainer'
+import { Grid, Card, Typography } from '@material-ui/core';
+import LateralView from '../components/LateralView';
 
-const getReferencesByDOI = async ( doi ) => {
+const getReferencesByDOI = async ( doi, setNeighbors ) => {
 
     const nodes = []
     const relations = []
 
-    return axios.get(`https://opencitations.net/index/coci/api/v1/references/${doi}`).then(res => {
+    const token = localStorage.getItem('token')
+
+    return axios.get(`/api/article/neighbors?doi=${doi}`, { headers:{'x-access-token': token}  }
+    ).then(res => {
+
+        setNeighbors(res.data)
 
         res.data.forEach(element => {
-            const node = { data: { id: element.cited, label: element.cited } }
+            const node = { data: { id: element.doi, label: element.title } }
             nodes.push( node )
 
-            const edge = { data: { source: doi, target: element.cited, label: "cy" } }
+            const edge = { data: { source: doi, target: element.doi, label: "cy" } }
             relations.push( edge )
         });
 
@@ -27,18 +34,22 @@ const getReferencesByDOI = async ( doi ) => {
 
 const GraphView = props => {
 
-    const [doi, setDOI] = useState("10.1038/339155a0");
+    //const [doi, setDOI] = useState("10.1038/339155a0");
+
+    const [doi, setDOI] = useState("10.1145/2462356.2462379")
 
     const [references, setReferences] = useState({});
 
     const [metadata, setMetadata] = useState({});
+    const [neighbors, setNeighbors] = useState([]);
 
     const handleSubmit = async (evt) => {
         evt.preventDefault();
         let nodesArray = [{ data: { id: doi, label: doi } }]
         let relationsArray = []
+        const token = localStorage.getItem('token')
 
-        const FirstLevelRefs = await getReferencesByDOI(doi)
+        const FirstLevelRefs = await getReferencesByDOI(doi, setNeighbors)
 
         nodesArray = nodesArray.concat( FirstLevelRefs.nodes )
         relationsArray = relationsArray.concat( FirstLevelRefs.edges )
@@ -53,10 +64,9 @@ const GraphView = props => {
 
         setReferences({nodes: nodesArray, edges : relationsArray})
 
-        axios.get(`https://opencitations.net/index/coci/api/v1/metadata/${doi}`).then(res => {
-            
+        axios.get(`/api/article?doi=${doi}`,  { headers:{'x-access-token': token} }
+        ).then(res => {
             setMetadata(res.data)
-
         })
     } 
 
@@ -64,7 +74,18 @@ const GraphView = props => {
         <div>
             <Input onSubmit={handleSubmit} onChange={setDOI} DOI={doi} />
 
-            <GraphContainer Title={doi} GraphData={references}></GraphContainer>
+            <Grid container >
+
+                <Grid item xs={4}>
+                    <LateralView metadata={metadata} neighbors={neighbors} ></LateralView>
+                </Grid>
+                
+                
+                <Grid item xs={8}>
+                    <GraphContainer Title={doi} GraphData={references}></GraphContainer>
+                </Grid>
+
+            </Grid>
 
             
 
