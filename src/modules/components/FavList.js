@@ -24,25 +24,29 @@ function FavList(props) {
       );
     }
 
-    const [array, setArray] = useState([]);
+    const [favorites, setFavorites] = useState([]);
 
     useEffect(() => {
       const token = localStorage.getItem('token')
       axios.get(`/api/fav/list`,  { headers:{'x-access-token': token} }
       ).then(res => {
-          setArray(res.data)
+        setFavorites(res.data)
       })
     }, [])
     
-    const handleRemoveDiv = (idx) => {
-        let arrayCopy = [...array];
-        arrayCopy.splice(array.indexOf(idx), 1); //remove the item at the specific index
-        setArray(arrayCopy);
+    const handleRemoveDiv = (fav) => {
+      const token = localStorage.getItem('token')
+      axios.post(`/api/fav/delete?doi=${fav.doi}`, {}, { headers:{'x-access-token': token} }
+      ).then(res => {
+          console.log("successful removed fav")
+          const newFavorites = favorites.filter( (element) => {return element.doi != fav.doi})
+          setFavorites(newFavorites)
+      })
     };
 
     return (        
       <List >
-        {generate(array)}
+        {generate(favorites)}
       </List>
     )
 }
