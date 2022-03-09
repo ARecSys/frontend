@@ -3,7 +3,7 @@ import CytoscapeComponent from "react-cytoscapejs";
 
 import Cytoscape from 'cytoscape';
 import spread from "cytoscape-spread";
-import { Paper } from "@material-ui/core";
+import { Paper, Box } from "@material-ui/core";
 
 
 Cytoscape.use(spread);
@@ -15,7 +15,7 @@ const GraphContainer = props => {
   const ref = useRef(null)
 
   const layout = {
-    name: "concentric"
+    name: "random"
   };
 
   const styleSheet = [
@@ -43,15 +43,15 @@ const GraphContainer = props => {
     {
       selector: "node:selected",
       style: {
-        "border-width": "6px",
+        "border-width": "3px",
         "border-color": "#AAD8FF",
         "border-opacity": "0.5",
         "background-color": "#77828C",
-        width: 50,
-        height: 50,
+        width: 40,
+        height: 40,
         //text props
         "text-outline-color": "#77828C",
-        "text-outline-width": 8
+        "text-outline-width": 3
       }
     },
     {
@@ -80,7 +80,7 @@ const GraphContainer = props => {
   }, []);
 
   return (
-    <>
+    <Box sx={{ flexWrap: 'wrap' }}>
       <Paper ref={ref} elevation={6} style={{ padding: 10, marginRight: 30, marginLeft: 30 }}>
         <h1>{props.Title}</h1>
         <div
@@ -98,6 +98,8 @@ const GraphContainer = props => {
             minZoom={0.1}
             autounselectify={false}
             boxSelectionEnabled={true}
+
+            zoom={2}
             
             stylesheet={styleSheet}
             cy={cy => {
@@ -121,7 +123,7 @@ const GraphContainer = props => {
           />
         </div>
       </Paper>
-    </>
+    </Box>
   );
 }
 

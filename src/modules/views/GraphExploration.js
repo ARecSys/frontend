@@ -37,6 +37,7 @@ const GraphView = props => {
     //const [doi, setDOI] = useState("10.1038/339155a0");
 
     const [doi, setDOI] = useState("10.1145/2462356.2462379")
+    const[title, setTitle] = useState("")
 
     const [references, setReferences] = useState({});
 
@@ -66,7 +67,9 @@ const GraphView = props => {
 
         axios.get(`/api/article?doi=${doi}`,  { headers:{'x-access-token': token} }
         ).then(res => {
+            setTitle(res.data.title)
             setMetadata(res.data)
+
         })
     } 
 
@@ -82,7 +85,7 @@ const GraphView = props => {
                 
                 
                 <Grid item xs={8}>
-                    <GraphContainer Title={doi} GraphData={references}></GraphContainer>
+                    <GraphContainer Title={title} GraphData={references}></GraphContainer>
                 </Grid>
 
             </Grid>

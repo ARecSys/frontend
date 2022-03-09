@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import PropTypes from 'prop-types'
-import { Paper, Tabs, Tab, Typography } from "@material-ui/core";
+import { Paper, Tabs, Tab, Typography, Box } from "@material-ui/core";
+import FavList from './FavList';
+import NeighborList from './NeighborsList';
 
 
 function TabPanel(props) {
@@ -15,7 +17,7 @@ function TabPanel(props) {
         {...other}
       >
         {value === index && (
-            <Typography>{children}</Typography>
+            <Typography component={'div'}>{children}</Typography>
         )}
       </div>
     );
@@ -60,10 +62,11 @@ const LateralView = props => {
     
 
     return (
-        <>
-        <Tabs value={value} onChange={handleChange} style={{ padding: 10, marginRight: -10, marginLeft: 30 }}>
+        <Box sx={{ flexWrap: 'wrap' }}>
+        <Tabs value={value} onChange={handleChange} style={{ padding: 10, marginRight: -10, marginLeft: 30 }} variant="scrollable" scrollButtons="auto">
             <Tab label="Article Metadata" {...a11yProps(0)} />
             <Tab label="Neighbors" {...a11yProps(1)} />
+            <Tab label="Favorites" {...a11yProps(2)} />
         </Tabs>
         
 
@@ -87,12 +90,14 @@ const LateralView = props => {
         </TabPanel>
 
         <TabPanel value={value} index={1}>
-            <Paper ref={ref} elevation={6} style={{ padding: 10, marginRight: -10, marginLeft: 30, maxHeight: 400, overflow: 'scroll' }}>
-                { NeighborsList }
-            </Paper>
+            <NeighborList neighbors={props.neighbors}></NeighborList>
+        </TabPanel>
+
+        <TabPanel value={value} index={2}>
+            <FavList></FavList>
         </TabPanel>
             
-        </>
+        </Box>
         
     )
 }

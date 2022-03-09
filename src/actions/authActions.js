@@ -39,7 +39,6 @@ export const loginUser = (userData, history, setToken, setUserData) => {
     .post("/api/users/login", userData)
     .then(res => {
 
-      console.log("test")
       //Save to localStorage
       const { token } = res.data;
       localStorage.setItem("token", token);
