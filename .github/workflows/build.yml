@@ -5,6 +5,10 @@ on:
     branches:
       - develop
   workflow_dispatch:
+env:
+  ES_URL: ${{ secrets.ES_URL }}
+  ES_INDEX: ${{ secrets.ES_INDEX }}
+  ES_CREDENTIALS: ${{ secrets.ES_CREDENTIALS }}
 
 jobs:
   build:
