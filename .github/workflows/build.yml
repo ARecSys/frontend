@@ -31,9 +31,9 @@ jobs:
         labels: dev
         file: ./Dockerfile
         build-args: |
-          REACT_APP_ES_URL= '${{secrets.ES_URL}}'
-          REACT_APP_ES_INDEX= '${{ secrets.ES_INDEX }}'
-          REACT_APP_ES_CREDENTIALS= '${{ secrets.ES_CREDENTIALS }}'
+          REACT_APP_ES_URL=${{secrets.ES_URL}}
+          REACT_APP_ES_INDEX=${{ secrets.ES_INDEX }}
+          REACT_APP_ES_CREDENTIALS=${{ secrets.ES_CREDENTIALS }}
 
   # deploy:
   #   runs-on: ubuntu-latest
