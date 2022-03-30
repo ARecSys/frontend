@@ -7,6 +7,7 @@ import Input from '../form/GraphInput'
 import GraphContainer from '../components/GraphContainer'
 import { Grid, Card, Typography } from '@material-ui/core';
 import LateralView from '../components/LateralView';
+import SearchBar from '../components/SearchBar';
 
 const getReferencesByDOI = async ( doi, setNeighbors ) => {
 
@@ -34,8 +35,6 @@ const getReferencesByDOI = async ( doi, setNeighbors ) => {
 
 const GraphView = props => {
 
-    //const [doi, setDOI] = useState("10.1038/339155a0");
-
     const [doi, setDOI] = useState("10.1145/2462356.2462379")
     const[title, setTitle] = useState("")
 
@@ -46,12 +45,18 @@ const GraphView = props => {
 
     const handleSubmit = async (evt) => {
         evt.preventDefault();
-        let nodesArray = [{ data: { id: doi, label: doi } }]
-        let relationsArray = []
-        const token = localStorage.getItem('token')
 
+        const token = localStorage.getItem('token')
         const FirstLevelRefs = await getReferencesByDOI(doi, setNeighbors)
 
+        axios.get(`/api/article?doi=${doi}`,  { headers:{'x-access-token': token} }
+        ).then(res => {
+            setTitle(res.data.title)
+            setMetadata(res.data)
+
+        })
+        let nodesArray = [{ data: { id: doi, label: doi } }]
+        let relationsArray = []
         nodesArray = nodesArray.concat( FirstLevelRefs.nodes )
         relationsArray = relationsArray.concat( FirstLevelRefs.edges )
        /*
@@ -65,24 +70,39 @@ const GraphView = props => {
 
         setReferences({nodes: nodesArray, edges : relationsArray})
 
+
+    } 
+
+    const handleClick = async () => {
+
+        const token = localStorage.getItem('token')
+        const FirstLevelRefs = await getReferencesByDOI(doi, setNeighbors)
+
         axios.get(`/api/article?doi=${doi}`,  { headers:{'x-access-token': token} }
         ).then(res => {
             setTitle(res.data.title)
             setMetadata(res.data)
 
         })
+        let nodesArray = [{ data: { id: doi, label: doi } }]
+        let relationsArray = []
+        nodesArray = nodesArray.concat( FirstLevelRefs.nodes )
+        relationsArray = relationsArray.concat( FirstLevelRefs.edges )
+
+        setReferences({nodes: nodesArray, edges : relationsArray})
+
     } 
 
     return (
         <div>
-            <Input onSubmit={handleSubmit} onChange={setDOI} DOI={doi} />
+            <SearchBar onClick={handleClick} onChange={setDOI}></SearchBar>
+            {/*<Input onSubmit={handleSubmit} onChange={setDOI} DOI={doi} />*/}
 
             <Grid container >
 
                 <Grid item xs={4}>
                     <LateralView metadata={metadata} neighbors={neighbors} ></LateralView>
                 </Grid>
-                
                 
                 <Grid item xs={8}>
                     <GraphContainer Title={title} GraphData={references}></GraphContainer>

@@ -56,7 +56,7 @@ export default function AppFooter() {
   return (
     <Typography component="footer" className={classes.root}>
       <Container className={classes.container}>
-        <Grid
+        {/*<Grid
           container
           direction="column"
           justifyContent="flex-end"
@@ -73,7 +73,7 @@ export default function AppFooter() {
             </a>
           </Grid>
 
-        </Grid>
+        </Grid>*/}
 
       </Container>
     </Typography>

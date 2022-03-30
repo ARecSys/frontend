@@ -72,19 +72,17 @@ const LateralView = props => {
 
         <TabPanel value={value} index={0}>
             <Paper ref={ref} elevation={6} style={{ padding: 10, marginRight: -10, marginLeft: 30 }}>
-                <h1>Article's Metadata</h1>
+                
+                { (props.metadata.title || props.metadata.authors) ?  <h1>Article's Metadata</h1> : <div/>}
 
-                <h2>Title</h2>
+                { props.metadata.title? <div> <h2>Title</h2> {JSON.stringify(props.metadata.title)} </div>: <div/>}
 
-                { props.metadata.title?  JSON.stringify(props.metadata.title) : ""}
 
-                <h2>Author</h2>
+                { props.metadata.authors? <div> <h2>Author(s)</h2> {JSON.stringify(props.metadata.authors)}</div>  : <div/>}
 
-                { props.metadata.authors?  JSON.stringify(props.metadata.authors) : ""}
+                
 
-                <h2>Fields of Study</h2>
-
-                { props.metadata.fos?  JSON.stringify(props.metadata.fos) : ""}
+                { props.metadata.fos? <div> <h2>Fields of Study</h2> {JSON.stringify(props.metadata.fos)} </div>  : <div/>}
 
             </Paper>
         </TabPanel>
