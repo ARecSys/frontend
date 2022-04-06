@@ -56,14 +56,14 @@ export default function AppFooter() {
   return (
     <Typography component="footer" className={classes.root}>
       <Container className={classes.container}>
-        {/*<Grid
+        <Grid
           container
           direction="column"
           justifyContent="flex-end"
           className={classes.iconsWrapper}
           spacing={2}
         >
-
+         { /*
           <Grid item className={classes.icons}>
             <a href="https://material-ui.com/" className={classes.icon}>
               <img src="/appFooterFacebook.png" alt="Facebook" />
@@ -72,8 +72,8 @@ export default function AppFooter() {
               <img src="/appFooterTwitter.png" alt="Twitter" />
             </a>
           </Grid>
-
-        </Grid>*/}
+          */}
+        </Grid>
 
       </Container>
     </Typography>

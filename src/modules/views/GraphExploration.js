@@ -4,10 +4,40 @@ import PropTypes from 'prop-types'
 import axios from 'axios';
 
 import Input from '../form/GraphInput'
-import GraphContainer from '../components/GraphContainer'
-import { Grid, Card, Typography } from '@material-ui/core';
+import NeighborsGraphContainer from '../components/NeighborsGraphContainer'
+import { Grid, Card, Typography, Tabs, Tab, } from '@material-ui/core';
 import LateralView from '../components/LateralView';
 import SearchBar from '../components/SearchBar';
+import RecoGraphContainer from '../components/RecoGraphContainer';
+
+
+
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+  
+    return (
+      <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        {...other}
+      >
+        {value === index && (
+            <Typography component={'div'}>{children}</Typography>
+        )}
+      </div>
+    );
+}
+
+
+function a11yProps(index) {
+    return {
+      id: `simple-tab-${index}`,
+      'aria-controls': `simple-tabpanel-${index}`,
+    };
+  }
+
 
 const getReferencesByDOI = async ( doi, setNeighbors ) => {
 
@@ -22,10 +52,10 @@ const getReferencesByDOI = async ( doi, setNeighbors ) => {
         setNeighbors(res.data)
 
         res.data.forEach(element => {
-            const node = { data: { id: element.doi, label: element.title } }
+            const node = { data: { id: element.doi+element.title, label: element.title } }
             nodes.push( node )
 
-            const edge = { data: { source: doi, target: element.doi, label: "cy" } }
+            const edge = { data: { source: doi, target: element.doi+element.title, label: "cy" } }
             relations.push( edge )
         });
 
@@ -42,6 +72,12 @@ const GraphView = props => {
 
     const [metadata, setMetadata] = useState({});
     const [neighbors, setNeighbors] = useState([]);
+
+    const [value, setValue] = useState(0);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
 
     const handleSubmit = async (evt) => {
         evt.preventDefault();
@@ -96,7 +132,7 @@ const GraphView = props => {
     return (
         <div>
             <SearchBar onClick={handleClick} onChange={setDOI}></SearchBar>
-            {/*<Input onSubmit={handleSubmit} onChange={setDOI} DOI={doi} />*/}
+            {<Input onSubmit={handleSubmit} onChange={setDOI} DOI={doi} />}
 
             <Grid container >
 
@@ -105,7 +141,19 @@ const GraphView = props => {
                 </Grid>
                 
                 <Grid item xs={8}>
-                    <GraphContainer Title={title} GraphData={references}></GraphContainer>
+                    <Tabs value={value} onChange={handleChange} style={{ padding: 10, marginRight: -10, marginLeft: 30 }} variant="scrollable" scrollButtons="auto">
+                        <Tab label="Neighbors Graph" {...a11yProps(0)} />
+                        <Tab label="Recommandations Graph" {...a11yProps(1)} />
+                    </Tabs>
+
+                    <TabPanel value={value} index={0}>
+                        <NeighborsGraphContainer Title={title} GraphData={references}></NeighborsGraphContainer>
+                    </TabPanel>
+
+                    <TabPanel value={value} index={1}>
+                        <RecoGraphContainer></RecoGraphContainer>
+                    </TabPanel>
+
                 </Grid>
 
             </Grid>

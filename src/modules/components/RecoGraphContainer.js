@@ -3,16 +3,46 @@ import CytoscapeComponent from "react-cytoscapejs";
 
 import Cytoscape from 'cytoscape';
 import spread from "cytoscape-spread";
-import { Paper, Box } from "@material-ui/core";
+import { Paper, Box} from "@material-ui/core";
 
+import axios from 'axios';
+
+const getRecommandations = async () => {
+
+  const nodes = []
+  const relations = []
+
+  const token = localStorage.getItem('token')
+
+  return axios.get(`/api/reco/list`, { headers:{'x-access-token': token}  }
+  ).then(res => {
+
+    const scores = res.data.scores
+
+    res.data.nodes.forEach(element => {
+      const node = { data: { id: element, label: element } }
+      nodes.push( node )
+  });
+
+    res.data.edges.forEach(element => {
+      const edge = { data: { source: element[0], target: element[1], label: "cy" } }
+      relations.push( edge )
+  });
+
+    return {nodes: nodes, edges : relations} 
+  })
+}
 
 Cytoscape.use(spread);
 
-const GraphContainer = props => {
+const RecoGraphContainer = props => {
 
   const [width, setWith] = useState("100%");
   const [height, setHeight] = useState("400px");
+  const [graphData, setGraphData] = useState({});
   const ref = useRef(null)
+
+  getRecommandations()
 
   const layout = {
     name: "random"
@@ -75,22 +105,37 @@ const GraphContainer = props => {
 
   let myCyRef;
 
+  const getGraphData = async () => {
+    const graphDataRaw = await getRecommandations()
+
+    setGraphData(graphDataRaw)
+  }  
+
   useEffect(() => {
     setHeight(ref.current.clientHeight)
   }, []);
 
+  useEffect(() => {
+    getGraphData();
+  }, []);
+
+
+  
+  
+
   return (
     <Box sx={{ flexWrap: 'wrap' }}>
-      <Paper ref={ref} elevation={6} style={{ padding: 10, marginRight: 30, marginLeft: 30 }}>
-        <h1>{props.Title}</h1>
+      <Paper ref={ref} elevation={6} style={{ padding: 10, marginRight: 30, marginLeft: 30, marginBottom:30 }}>
         <div
           style={{
             border: "1px solid",
-            backgroundColor: "#f5f6fe"
+            backgroundColor: "#f5f6fe",
+            borderRadius: "5px"
+            
           }}
         >
           <CytoscapeComponent
-            elements={CytoscapeComponent.normalizeElements(props.GraphData)}
+            elements={CytoscapeComponent.normalizeElements(graphData)}
             style={{ width: width, height: height }}
             layout={layout}
             zoomingEnabled={true}
@@ -127,4 +172,4 @@ const GraphContainer = props => {
   );
 }
 
-export default GraphContainer
+export default RecoGraphContainer
